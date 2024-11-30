@@ -5,10 +5,15 @@ from tkinter import messagebox
 import drawbubblesort
 import drawcocktailsort
 import drawselectionsort
+import drawinsertionsort
+
+import insertionsort
+
 import settings
 import bubblesortcommands
 import cocktailsortcommands
 import selectionsortcommands
+import insertionsortcommands
 
 root.geometry( str( settings.root_x ) + 'x' + str ( settings.root_y ) ) 
 
@@ -70,7 +75,6 @@ number_of_elements_slide.pack()
 
 data = []
 
-
 options = [ 
         'Bars', 
         'Squares'
@@ -90,10 +94,6 @@ clicked = tk.StringVar()
   
 # initial menu text 
 clicked.set( 'Squares' ) 
-view = tk.OptionMenu( view_frame , clicked , *options ) 
-view.place( x = settings.view_container_frame_width - 30, y = 10, anchor = 'ne' )
-
-gen = None
 
 bars_canvas = tk.Canvas( view_frame,
                          width = settings.view_canvas_width, 
@@ -101,21 +101,30 @@ bars_canvas = tk.Canvas( view_frame,
 squares_canvas = tk.Canvas( view_frame, bd = -2,
                             width = settings.view_canvas_width, 
                             height = settings.view_canvas_height )
-squares_canvas.place( x = ( settings.view_container_frame_width - 20 ) / 2,
-                      y = ( settings.view_container_frame_height - 20 ) / 2,
-                      anchor = 'center' )
+
+view_canvas = squares_canvas
+
+view_canvas.place( x = ( settings.view_container_frame_width - 20 ) / 2,
+                   y = ( settings.view_container_frame_height - 20 ) / 2,
+                   anchor = 'center' )
 
 def choose_view(view):
+    global view_canvas
+    print( view )
+    view_canvas.place_forget()
     if ( view == 'Bars' ):
-        squares_canvas.place_forget()
-        bars_canvas.place( width = ( settings.view_container_frame_width - 20 ) / 2,
-                   height = ( settings.view_container_frame_height ) / 2,
-                   anchor = 'center' )
+        view_canvas = bars_canvas
     else:
-        bars_canvas.place_forget()
-        squares_canvas.place( width = ( settings.view_container_frame_width - 20 ) / 2,
-                   height = ( settings.view_container_frame_height ) / 2,
-                   anchor = 'center' )
+        view_canvas = squares_canvas
+    view_canvas.place( x = ( root.winfo_width() - root.winfo_width() / 3 - 20 ) / 2,
+                       y = ( root.winfo_height() - settings.status_bar_height - 20 ) / 2,
+                       anchor = 'center' )
+
+view = tk.OptionMenu( view_frame , clicked , *options, command = choose_view ) 
+view.place( x = settings.view_container_frame_width - 30, y = 10, anchor = 'ne' )
+
+gen = None
+     
 
 algorithm_label = tk.Label( algorithm_frame, text = 'Algorithm:' )
 algorithm_label.place( x = 10, y = 10 )
@@ -130,6 +139,7 @@ algorithm_frame.place( x = 10, y = 10 )
 
 def handle_square_sort():
     global gen
+    print( selected_algorithm.get() )
     speed = speed_slider.get()
     match selected_algorithm.get():
         case 'Bubblesort':
@@ -138,6 +148,8 @@ def handle_square_sort():
             gen = cocktailsortcommands.sort_squares( squares_canvas, data, speed )
         case 'Selectionsort':
             gen = selectionsortcommands.sort_squares( squares_canvas, data, speed )
+        case 'Insertionsort':
+            gen = insertionsortcommands.sort_squares( squares_canvas, data, speed )
         case _: 
             pass
 
@@ -154,13 +166,25 @@ speed_slider.place( x = settings.options_frame_width - 30,
 def draw_squares():
     match selected_algorithm.get():
         case 'Bubblesort':
-            drawbubblesort.draw_squares( data, squares_canvas )
+            drawbubblesort.draw_squares( squares_canvas, data )
+            drawbubblesort.draw_bars( bars_canvas, data )
         case 'Cocktailsort':
             drawcocktailsort.draw_squares( data, squares_canvas )
         case 'Selectionsort':
             drawselectionsort.draw_squares( squares_canvas, data )
+        case 'Insertionsort':
+            drawinsertionsort.draw_squares( squares_canvas, data )
         case _:
             pass
+
+partially_sorted = tk.IntVar()
+partially_sorted_checkbox = tk.Checkbutton( generator_frame, 
+                                            text = 'Partiallly sorted', 
+                                            variable = partially_sorted )
+partially_sorted_checkbox.pack()
+
+def partially_sort():
+    pass
 
 def generate():
     global data
@@ -174,6 +198,8 @@ def generate():
                              'Minimum value is greater than maximum value.')
     for _ in range( number_of_elements ):
         data.append( random.randint( minimum_value, maximum_value ) )
+    if partially_sorted.get() == 1:
+        partially_sort()
     draw_squares()
 
 generate_button = tk.Button( generator_frame, text = "Generate", command = generate )
@@ -197,9 +223,9 @@ def draw():
     
     sort_button.place( x = 10, y = root.winfo_height() - settings.status_bar_height - 30, anchor = 'sw' )
 
-    squares_canvas.place( x = ( root.winfo_width() - root.winfo_width() / 3  - 20 ) / 2,
-                          y = ( root.winfo_height() - settings.status_bar_height - 20 ) / 2,
-                          anchor = 'center' )
+    view_canvas.place( x = ( root.winfo_width() - root.winfo_width() / 3  - 20 ) / 2,
+                       y = ( root.winfo_height() - settings.status_bar_height - 20 ) / 2,
+                       anchor = 'center' )
 
 draw()
 
