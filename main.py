@@ -6,6 +6,8 @@ import drawbubblesort
 import drawcocktailsort
 import drawselectionsort
 import drawinsertionsort
+import drawquicksort
+import drawbucketsort
 
 import insertionsort
 
@@ -14,6 +16,8 @@ import bubblesortcommands
 import cocktailsortcommands
 import selectionsortcommands
 import insertionsortcommands
+import quicksortcommands
+import bucketsortcommands
 
 root.geometry( str( settings.root_x ) + 'x' + str ( settings.root_y ) ) 
 
@@ -75,7 +79,7 @@ number_of_elements_slide.pack()
 
 data = []
 
-options = [ 
+view_options = [ 
         'Bars', 
         'Squares'
 ] 
@@ -90,12 +94,12 @@ algorithm_options = [
 ]
 
 # datatype of menu text 
-clicked = tk.StringVar() 
+selected_view = tk.StringVar() 
   
 # initial menu text 
-clicked.set( 'Squares' ) 
+selected_view.set( 'Squares' ) 
 
-bars_canvas = tk.Canvas( view_frame,
+bars_canvas = tk.Canvas( view_frame, bd = -2,
                          width = settings.view_canvas_width, 
                          height = settings.view_canvas_height )
 squares_canvas = tk.Canvas( view_frame, bd = -2,
@@ -110,7 +114,6 @@ view_canvas.place( x = ( settings.view_container_frame_width - 20 ) / 2,
 
 def choose_view(view):
     global view_canvas
-    print( view )
     view_canvas.place_forget()
     if ( view == 'Bars' ):
         view_canvas = bars_canvas
@@ -120,7 +123,7 @@ def choose_view(view):
                        y = ( root.winfo_height() - settings.status_bar_height - 20 ) / 2,
                        anchor = 'center' )
 
-view = tk.OptionMenu( view_frame , clicked , *options, command = choose_view ) 
+view = tk.OptionMenu( view_frame, selected_view, *view_options, command = choose_view ) 
 view.place( x = settings.view_container_frame_width - 30, y = 10, anchor = 'ne' )
 
 gen = None
@@ -137,23 +140,63 @@ algorithm = tk.OptionMenu( algorithm_frame,
 algorithm.place( x = settings.options_frame_width - 30, y = 10, anchor = 'ne' )
 algorithm_frame.place( x = 10, y = 10 )
 
-def handle_square_sort():
+def handle_sort():
     global gen
-    print( selected_algorithm.get() )
     speed = speed_slider.get()
+    current_view = selected_view.get()
     match selected_algorithm.get():
         case 'Bubblesort':
-            gen = bubblesortcommands.sort_squares( squares_canvas, data, speed )
+            if current_view == 'Squares':
+                gen = bubblesortcommands.sort_squares( view_canvas, 
+                                                       data, 
+                                                       speed )
+            else:
+                gen = bubblesortcommands.sort_bars( view_canvas,
+                                                    data,
+                                                    speed )
         case 'Cocktailsort':
-            gen = cocktailsortcommands.sort_squares( squares_canvas, data, speed )
+            if current_view == 'Squares':    
+                gen = cocktailsortcommands.sort_squares( view_canvas, 
+                                                         data, 
+                                                         speed )
+            else:
+                gen = cocktailsortcommands.sort_bars( view_canvas, 
+                                                      data,
+                                                      speed )
         case 'Selectionsort':
-            gen = selectionsortcommands.sort_squares( squares_canvas, data, speed )
+            if current_view == 'Squares':
+                gen = selectionsortcommands.sort_squares( view_canvas, 
+                                                          data, 
+                                                          speed )
+            else:
+                gen = selectionsortcommands.sort_bars( view_canvas,
+                                                       data,
+                                                       speed )
         case 'Insertionsort':
-            gen = insertionsortcommands.sort_squares( squares_canvas, data, speed )
+            if current_view == 'Squares':
+                gen = insertionsortcommands.sort_squares( view_canvas, 
+                                                          data, 
+                                                          speed )
+            else:
+                gen = insertionsortcommands.sort_bars( view_canvas,
+                                                       data,
+                                                       speed )
+        case 'Quicksort':
+            gen = quicksortcommands.sort_squares( squares_canvas, data, speed )
+        case 'Bucketsort':
+            if current_view == 'Squares':
+                gen = bucketsortcommands.sort_squares( view_canvas, 
+                                                       data, 
+                                                       speed )
+            else:
+                gen = bucketsortcommands.sort_bars( view_canvas, 
+                                                    data, 
+                                                    speed )
+ 
         case _: 
             pass
 
-sort_button = tk.Button( view_frame, text = 'Sort', command = handle_square_sort )
+sort_button = tk.Button( view_frame, text = 'Sort', command = handle_sort )
 sort_button.place( x = 10, y = settings.status_bar_y_offset - 30, anchor = 'sw' )
 
 speed_frame.place( in_ = algorithm_frame, rely = 1.0, y = 10 , relx = 0.0, x = 0 )
@@ -169,11 +212,19 @@ def draw_squares():
             drawbubblesort.draw_squares( squares_canvas, data )
             drawbubblesort.draw_bars( bars_canvas, data )
         case 'Cocktailsort':
-            drawcocktailsort.draw_squares( data, squares_canvas )
+            drawcocktailsort.draw_squares( squares_canvas, data )
+            drawcocktailsort.draw_bars( bars_canvas, data )
         case 'Selectionsort':
             drawselectionsort.draw_squares( squares_canvas, data )
+            drawselectionsort.draw_bars( bars_canvas, data )
         case 'Insertionsort':
             drawinsertionsort.draw_squares( squares_canvas, data )
+            drawinsertionsort.draw_bars( bars_canvas, data )
+        case 'Quicksort':
+            drawquicksort.draw_squares( squares_canvas, data )
+        case 'Bucketsort':
+            drawbucketsort.draw_squares( squares_canvas, data )
+            drawbucketsort.draw_bars( bars_canvas, data ) 
         case _:
             pass
 
@@ -188,7 +239,7 @@ def partially_sort():
 
 def generate():
     global data
-    squares_canvas.delete('all') 
+    view_canvas.delete('all') 
     data = []
     number_of_elements = number_of_elements_slide.get()
     minimum_value = mimimum_value_slide.get()

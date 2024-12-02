@@ -2,34 +2,37 @@ import drawbubblesort
 import time
 from bubblesort import bubblesort_
 
-def sort_squares(squares, data_, speed):
+def sort_squares(squares_canvas, data_, speed):
     gen = bubblesort_( data_ )
-    drawbubblesort.draw_bubble( squares, 0 )
+    drawbubblesort.draw_squares_bubble( squares_canvas, 0 )
     for data in gen:
         time.sleep( 5 / speed )
         yield
-        step_squares( data, squares )
+        step_squares( squares_canvas, data )
     time.sleep( 5 / speed )
-    drawbubblesort.remove_bubble( squares )
+    drawbubblesort.remove_squares_bubble( squares_canvas )
     drawbubblesort.reset()
     yield
 
-def sort_bars(bars):
+def sort_bars(bars_canvas, data_, speed):
     gen = bubblesort_( data_ )
-    drawbubblesort.draw_bubble( bars, 0 )
+    drawbubblesort.draw_bars_bubble( bars_canvas, 0 )
     for data in gen:
-        time.sleep( 0.5 )
-        step_bars( data, bars )
-    time.sleep( 0.5 )
-    drawbubblesort.remove_bubble( bars )
+        time.sleep( 5 / speed )
+        yield
+        step_bars( bars_canvas, data )
+    time.sleep( 5 / speed )
+    drawbubblesort.remove_bars_bubble( bars_canvas )
+    drawbubblesort.reset()
+    yield
 
-def step_bars(data, bars):
-    drawbubblesort.draw_bubble( bars, data[ 1 ]  )
+def step_bars(bars_canvas, data):
+    drawbubblesort.draw_bars_bubble( bars_canvas, data[ 1 ]  )
     if ( data[ 2 ] == True ):
-        drawbubblesort.swap_bars( bars, data[ 1 ] )
+        drawbubblesort.swap_bars( bars_canvas, data[ 1 ] )
 
-def step_squares(data, squares):
-    drawbubblesort.draw_bubble( squares, data[ 1 ]  )
+def step_squares(squares_canvas, data):
+    drawbubblesort.draw_squares_bubble( squares_canvas, data[ 1 ]  )
     print( data )
     if ( data[ 2 ] == True ):
-        drawbubblesort.swap_squares( squares, data[ 1 ] )
+        drawbubblesort.swap_squares( squares_canvas, data[ 1 ] )

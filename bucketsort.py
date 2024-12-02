@@ -1,5 +1,5 @@
 import unittest
-from bubblesort import bubblesort_
+from insertionsort import insertionsort_
 
 def bucketsort_(data, number_of_buckets = 10):
 
@@ -36,16 +36,17 @@ def bucketsort_(data, number_of_buckets = 10):
         for bucket in bucket_ranges:
             if data_point >= bucket[ 1 ] and data_point < bucket[ 2 ]:
                 buckets[ bucket[ 0 ] ].append( data_point )
+                yield buckets, bucket[ 0 ]
                 break
             if bucket[ 0 ] == number_of_buckets - 1:
                 buckets[ number_of_buckets - 1 ].append( data_point )
-        yield buckets
+                yield buckets, bucket[ 0 ]  
 
-    # search each bucket
-    for bucket in buckets:
-        gen = bubblesort_( bucket ) 
+    # sort each bucket
+    for bucket_index, bucket in enumerate( buckets ):
+        gen = insertionsort_( bucket ) 
         for i in gen:
-            yield buckets
+            yield buckets, bucket_index, i[ 3 ], i[ 2 ]
 
 
 
