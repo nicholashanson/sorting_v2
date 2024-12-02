@@ -1,27 +1,9 @@
 import settings
 import drawing
+from globals import squares, values, bars
 
-squares = []
-values = []
-bars = []
 buckets = None
 flat_buckets = None
-
-def draw_squares(squares_canvas, data):
-    for index, data_point in enumerate(data):      
-        square, value = drawing.draw_square( squares_canvas,
-                                             index, 
-                                             data_point,
-                                             settings.unsorted_partition_color )
-        squares.append( square )
-        values.append( value )
-
-def draw_bars(bars_canvas, data):
-    for index, data_point in enumerate( data ):      
-        bar = drawing.draw_bar( bars_canvas,
-                                index, 
-                                data_point )
-        bars.append( bar )
 
 def swap_squares(squares_canvas, bucket_index, temp):
     rhs_square_index = buckets[ bucket_index ][ temp ]

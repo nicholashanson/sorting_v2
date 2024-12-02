@@ -8,7 +8,8 @@ y_pixels_per_value = 1
 root_x = 900
 root_y = 500
 status_bar_height = 25
-options_frame_width = root_x / 3
+options_frame_rel_width = 1 / 3
+options_frame_width = root_x * options_frame_rel_width
 options_frame_height = root_y - status_bar_height
 view_container_frame_height = options_frame_height
 view_container_x_offset = options_frame_width
@@ -55,14 +56,14 @@ selected_color = 'blue'
 selected_bar_color = 'white'
 
 bucket_colors = [
-    'blue',
-    'green',
-    'yellow',
-    'purple',
-    'red',
-    'brown',
+    'dark salmon',
+    'salmon',
+    'light salmon',
     'orange',
-    'pink',
-    'khaki',
-    'thistle'
+    'dark orange',
+    'coral',
+    'light coral',
+    'tomato',
+    'orange red',
+    'red'
 ]

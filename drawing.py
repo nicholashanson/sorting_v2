@@ -1,12 +1,29 @@
 import ttkbootstrap
 import settings
+from globals import squares, values, bars
 
-def draw_bar(bars, index, data_point):    
-    return bars.create_rectangle( settings.bars_x_offset + index * settings.bar_span,
-                                  settings.bars_y_offset,
-                                  settings.bars_x_offset + index * settings.bar_span + settings.bar_width,
-                                  settings.bars_y_offset - settings.y_pixels_per_value * data_point,
-                                  fill = settings.unsorted_partition_color )
+def draw_squares(squares_canvas, data):
+    for index, data_point in enumerate(data):      
+        square, value = draw_square( squares_canvas,
+                                     index, 
+                                     data_point,
+                                     settings.unsorted_partition_color )
+        squares.append( square )
+        values.append( value )
+
+def draw_bars(bars_canvas, data):
+    for index, data_point in enumerate( data ):      
+        bar = draw_bar( bars_canvas,
+                        index, 
+                        data_point )
+        bars.append( bar )
+
+def draw_bar(bars_canvas, index, data_point):    
+    return bars_canvas.create_rectangle( settings.bars_x_offset + index * settings.bar_span,
+                                         settings.bars_y_offset,
+                                         settings.bars_x_offset + index * settings.bar_span + settings.bar_width,
+                                         settings.bars_y_offset - settings.y_pixels_per_value * data_point,
+                                         fill = settings.unsorted_partition_color )
 
 def swap_elements(canvas, container, lhs_index, rhs_index, element_span,
                   dimensions = 1):

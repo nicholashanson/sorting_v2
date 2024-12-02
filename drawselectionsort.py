@@ -1,27 +1,6 @@
 import settings
 import drawing
-
-squares = []
-values = []
-bars = []
-
-previous_current_minimum = 0
-
-def draw_squares(squares_canvas, data):
-    for index, data_point in enumerate(data):      
-        square, value = drawing.draw_square( squares_canvas,
-                                             index, 
-                                             data_point,
-                                             settings.unsorted_partition_color )
-        squares.append( square )
-        values.append( value )
-
-def draw_bars(bars_canvas, data):
-    for index, data_point in enumerate( data ):      
-        bar = drawing.draw_bar( bars_canvas,
-                                index, 
-                                data_point )
-        bars.append( bar )
+from globals import squares, values, bars
 
 def swap_squares(squares_canvas, partition_upper_bound, current_minimum):
     drawing.swap_elements( squares_canvas, 
